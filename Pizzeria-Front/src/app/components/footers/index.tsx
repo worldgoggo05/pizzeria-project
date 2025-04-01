@@ -20,7 +20,7 @@ export default function Footer() {
         <Stack flexDirection={"row"} sx={{ mt: "94px" }}>
           <Stack flexDirection={"column"} style={{ width: "340px" }}>
             <Box>
-              <img width={"100px"} src={"/icons/Pizzeria.svg"} />
+              <img width={"100px"} src={"/icons/pizzeria.png"} />
             </Box>
             <Box className={"foot-desc-txt"}>
               Welcome to Pizzeria, where authentic Italian flavors meet modern culinary artistry. 

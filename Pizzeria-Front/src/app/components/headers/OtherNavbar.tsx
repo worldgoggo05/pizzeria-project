@@ -42,7 +42,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             <Stack className="menu">
                 <Box>
                     <NavLink to={'/'}>
-                        <img className="brand-logo" src="/icons/pizzeria.svg" />
+                        <img className="brand-logo" src="/icons/pizzeria.png" />
                     </NavLink>
                 </Box>
 
