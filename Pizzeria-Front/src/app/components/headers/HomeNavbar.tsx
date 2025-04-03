@@ -149,8 +149,10 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                     <Box className={"wel-txt"}>
                         Authentic Italian Flavors
                     </Box>
-                    <Box className={"service-text"}>
-                        Order Online 24/7
+                    <Box className={"service-text-container"}>
+                        <div className={"service-text"}>
+                            Order Online 24/7
+                        </div>
                     </Box>
                     <Box className={"signup"}>
                         {!authMember ? (
