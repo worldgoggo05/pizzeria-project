@@ -162,9 +162,6 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                             ) : null}
                     </Box>
                 </Stack>
-                <Box className={"logo-frame"}>
-
-                </Box>
             </Stack>
         </Container>
     </div>

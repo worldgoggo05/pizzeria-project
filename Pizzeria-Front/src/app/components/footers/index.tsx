@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 const Footers = styled.div`
   width: 100%;
-  padding: 80px 0 40px;
+  padding: 40px 0 20px;
   background: #343434;
   color: #fff;
 `;
@@ -14,7 +14,7 @@ const FooterLink = styled(Link)`
   color: #C5C8C9;
   text-decoration: none;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   transition: color 0.3s;
   
   &:hover {
@@ -25,7 +25,7 @@ const FooterLink = styled(Link)`
 const ContactItem = styled(Box)`
   display: flex;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   
   span {
     min-width: 24px;
@@ -35,7 +35,7 @@ const ContactItem = styled(Box)`
 `;
 
 const SocialIcon = styled.img`
-  margin-right: 16px;
+  margin-right: 12px;
   cursor: pointer;
   transition: opacity 0.3s;
   
@@ -50,14 +50,14 @@ export default function Footer() {
   return (
     <Footers>
       <Container>
-        <Grid container spacing={4}>
+        <Grid container spacing={3}>
           {/* Logo and Description */}
           <Grid item xs={12} md={5}>
-            <Box mb={3}>
+            <Box mb={2}>
             <div className="brand-logo" style={{ 
                             fontFamily: 'Pacifico, cursive', 
                             fontWeight: 'bold', 
-                            fontSize: '30px', 
+                            fontSize: '24px', 
                             color: '#f8f8ff',
                             background: 'linear-gradient(45deg, #d7b668, #f8f8ff)',
                             WebkitBackgroundClip: 'text',
@@ -65,11 +65,11 @@ export default function Footer() {
                             Pizzeria
                         </div> 
             </Box>
-            <Typography variant="body2" sx={{ color: "#C5C8C9", mb: 3, maxWidth: "400px" }}>
+            <Typography variant="body2" sx={{ color: "#C5C8C9", mb: 2, maxWidth: "400px" }}>
               Welcome to Pizzeria, where authentic Italian flavors meet modern culinary artistry. 
               Our passion for crafting exceptional pizzas and delivering memorable dining experiences.
             </Typography>
-            <Box mt={3}>
+            <Box mt={2}>
               <SocialIcon src={"/icons/facebook.svg"} alt="Facebook" />
               <SocialIcon src={"/icons/twitter.svg"} alt="Twitter" />
               <SocialIcon src={"/icons/instagram.svg"} alt="Instagram" />
@@ -79,7 +79,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <Grid item xs={12} sm={6} md={3}>
-            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 3 }}>
+            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
               Sections
             </Typography>
             <Box>
@@ -92,7 +92,7 @@ export default function Footer() {
 
           {/* Contact Information */}
           <Grid item xs={12} sm={6} md={4}>
-            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 3 }}>
+            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
               Find Us
             </Typography>
             <Box>
@@ -119,8 +119,8 @@ export default function Footer() {
         <Box 
           component="hr" 
           sx={{ 
-            mt: 5, 
-            mb: 3,
+            mt: 3,
+            mb: 2,
             border: "none",
             height: "1px",
             backgroundColor: "#C5C8C9",

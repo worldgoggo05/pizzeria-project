@@ -1,4 +1,3 @@
-import Statistics from "./Statistics";
 import PopularDishes from "./PopularDishes";
 import NewDishes from "./NewDishes";
 import Advertisement from "./Advertisement";
@@ -51,7 +50,6 @@ useEffect(() => {
 
   return (
     <div className="homepage">
-      <Statistics />
       <PopularDishes />
       <NewDishes />
       <Advertisement />
