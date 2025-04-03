@@ -1,14 +1,47 @@
 import React from "react";
-import { Box, Container, Stack } from "@mui/material";
+import { Box, Container, Stack, Typography, Grid } from "@mui/material";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Footers = styled.div`
   width: 100%;
-  height: 590px;
-  display: flex;
+  padding: 80px 0 40px;
   background: #343434;
-  background-size: cover;
+  color: #fff;
+`;
+
+const FooterLink = styled(Link)`
+  color: #C5C8C9;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 12px;
+  transition: color 0.3s;
+  
+  &:hover {
+    color: #fff;
+  }
+`;
+
+const ContactItem = styled(Box)`
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  
+  span {
+    min-width: 24px;
+    margin-right: 8px;
+    font-weight: bold;
+  }
+`;
+
+const SocialIcon = styled.img`
+  margin-right: 16px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 export default function Footer() {
@@ -17,71 +50,82 @@ export default function Footer() {
   return (
     <Footers>
       <Container>
-        <Stack flexDirection={"row"} sx={{ mt: "94px" }}>
-          <Stack flexDirection={"column"} style={{ width: "340px" }}>
-            <Box>
-              <img width={"100px"} src={"/icons/pizzeria.png"} />
+        <Grid container spacing={4}>
+          {/* Logo and Description */}
+          <Grid item xs={12} md={5}>
+            <Box mb={3}>
+              <img width={"120px"} src={"/icons/pizzeria.png"} alt="Pizzeria Logo" />
             </Box>
-            <Box className={"foot-desc-txt"}>
+            <Typography variant="body2" sx={{ color: "#C5C8C9", mb: 3, maxWidth: "400px" }}>
               Welcome to Pizzeria, where authentic Italian flavors meet modern culinary artistry. 
               Our passion for crafting exceptional pizzas and delivering memorable dining experiences.
+            </Typography>
+            <Box mt={3}>
+              <SocialIcon src={"/icons/facebook.svg"} alt="Facebook" />
+              <SocialIcon src={"/icons/twitter.svg"} alt="Twitter" />
+              <SocialIcon src={"/icons/instagram.svg"} alt="Instagram" />
+              <SocialIcon src={"/icons/youtube.svg"} alt="YouTube" />
             </Box>
-            <Box className="sns-context">
-              <img src={"/icons/facebook.svg"} />
-              <img src={"/icons/twitter.svg"} />
-              <img src={"/icons/instagram.svg"} />
-              <img src={"/icons/youtube.svg"} />
+          </Grid>
+
+          {/* Quick Links */}
+          <Grid item xs={12} sm={6} md={3}>
+            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 3 }}>
+              Sections
+            </Typography>
+            <Box>
+              <FooterLink to="/">Home</FooterLink>
+              <FooterLink to="/products">Products</FooterLink>
+              {authMember && <FooterLink to="/orders">Orders</FooterLink>}
+              <FooterLink to="/help">Help</FooterLink>
             </Box>
-          </Stack>
-          <Stack sx={{ ml: "288px" }} flexDirection={"row"}>
-            <Stack>
-              <Box>
-                <Box className={"foot-category-title"}>Bo'limlar</Box>
-                <Box className={"foot-category-link"}>
-                  <Link to="/">Home</Link>
-                  <Link to="/products">Products</Link>
-                  {authMember && <Link to="/orders">Orders</Link>}
-                  <Link to="/help">Help</Link>
-                </Box>
-              </Box>
-            </Stack>
-            <Stack sx={{ ml: "100px" }}>
-              <Box>
-                <Box className={"foot-category-title"}>Find us</Box>
-                <Box
-                  flexDirection={"column"}
-                  sx={{ mt: "20px" }}
-                  className={"foot-category-link"}
-                  justifyContent={"space-between"}
-                >
-                  <Box flexDirection={"row"} className={"find-us"}>
-                    <span>L.</span>
-                    <div>Hongdae, Seoul</div>
-                  </Box>
-                  <Box className={"find-us"}>
-                    <span>P.</span>
-                    <div>+82 10 6895 3473</div>
-                  </Box>
-                  <Box className={"find-us"}>
-                    <span>E.</span>
-                    <div>alex@gmail.com</div>
-                  </Box>
-                  <Box className={"find-us"}>
-                    <span>H.</span>
-                    <div>Visit 24 hours</div>
-                  </Box>
-                </Box>
-              </Box>
-            </Stack>
-          </Stack>
-        </Stack>
-        <Stack
-          style={{ border: "1px solid #C5C8C9", width: "100%", opacity: "0.2" }}
-          sx={{ mt: "80px" }}
-        ></Stack>
-        <Stack className={"copyright-txt"}>
+          </Grid>
+
+          {/* Contact Information */}
+          <Grid item xs={12} sm={6} md={4}>
+            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 3 }}>
+              Find Us
+            </Typography>
+            <Box>
+              <ContactItem>
+                <span>L.</span>
+                <div>Hongdae, Seoul</div>
+              </ContactItem>
+              <ContactItem>
+                <span>P.</span>
+                <div>+82 10 6895 3473</div>
+              </ContactItem>
+              <ContactItem>
+                <span>E.</span>
+                <div>alex@gmail.com</div>
+              </ContactItem>
+              <ContactItem>
+                <span>H.</span>
+                <div>Visit 24 hours</div>
+              </ContactItem>
+            </Box>
+          </Grid>
+        </Grid>
+
+        <Box 
+          component="hr" 
+          sx={{ 
+            mt: 5, 
+            mb: 3,
+            border: "none",
+            height: "1px",
+            backgroundColor: "#C5C8C9",
+            opacity: 0.2
+          }} 
+        />
+        
+        <Typography 
+          variant="body2" 
+          align="center" 
+          sx={{ color: "#C5C8C9" }}
+        >
           © Copyright Alex MIT19, All rights reserved.
-        </Stack>
+        </Typography>
       </Container>
     </Footers>
   );
