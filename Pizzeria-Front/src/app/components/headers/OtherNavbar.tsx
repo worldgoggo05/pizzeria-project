@@ -42,7 +42,16 @@ export default function OtherNavbar(props: OtherNavbarProps) {
             <Stack className="menu">
                 <Box>
                     <NavLink to={'/'}>
-                        <img className="brand-logo" src="/icons/pizzeria.png" />
+                    <div className="brand-logo" style={{ 
+                            fontFamily: 'Pacifico, cursive', 
+                            fontWeight: 'bold', 
+                            fontSize: '30px', 
+                            color: '#f8f8ff',
+                            background: 'linear-gradient(45deg, #d7b668, #f8f8ff)',
+                            WebkitBackgroundClip: 'text',
+                        }}>
+                            Pizzeria
+                        </div>
                     </NavLink>
                 </Box>
 

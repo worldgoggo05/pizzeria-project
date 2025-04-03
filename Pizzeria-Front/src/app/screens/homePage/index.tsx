@@ -1,4 +1,3 @@
-import { Container } from "@mui/material";
 import Statistics from "./Statistics";
 import PopularDishes from "./PopularDishes";
 import NewDishes from "./NewDishes";
@@ -46,7 +45,7 @@ useEffect(() => {
         .then((data) => setNewDishes(data))
         .catch((err) => console.log(err));
     
-}, []);
+}, [setPopularDishes, setNewDishes]);
 
 
 

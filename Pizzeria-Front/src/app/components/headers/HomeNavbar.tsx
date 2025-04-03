@@ -45,7 +45,16 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             <Stack className="menu">
                 <Box>
                     <NavLink to={'/'}>
-                        <img className="brand-logo" src="/icons/pizzeria.png" />
+                        <div className="brand-logo" style={{ 
+                            fontFamily: 'Pacifico, cursive', 
+                            fontWeight: 'bold', 
+                            fontSize: '30px', 
+                            color: '#f8f8ff',
+                            background: 'linear-gradient(45deg, #d7b668, #f8f8ff)',
+                            WebkitBackgroundClip: 'text',
+                        }}>
+                            Pizzeria
+                        </div>
                     </NavLink>
                 </Box>
 
@@ -135,13 +144,13 @@ export default function HomeNavbar(props: HomeNavbarProps) {
             <Stack className={"header-frame"}>
                 <Stack className={"detail"}>
                     <Box className={"head-main-text"}>
-                        World's Most Delicious Cousine
+                        World's Greatest Pizza Experience
                     </Box>
                     <Box className={"wel-txt"}>
-                        The Choice, not just a choice
+                        Authentic Italian Flavors
                     </Box>
                     <Box className={"service-text"}>
-                        24 hours service
+                        Order Online 24/7
                     </Box>
                     <Box className={"signup"}>
                         {!authMember ? (
@@ -149,13 +158,12 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                             variant={"contained"} 
                             className={"signup-button"} onClick={()=> setSignupOpen(true)}>
                                 SIGN UP
-                                
                             </Button>
                             ) : null}
                     </Box>
                 </Stack>
                 <Box className={"logo-frame"}>
-                    <div className={"logo-img"}></div>
+
                 </Box>
             </Stack>
         </Container>

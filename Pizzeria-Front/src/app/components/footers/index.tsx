@@ -54,7 +54,16 @@ export default function Footer() {
           {/* Logo and Description */}
           <Grid item xs={12} md={5}>
             <Box mb={3}>
-              <img width={"120px"} src={"/icons/pizzeria.png"} alt="Pizzeria Logo" />
+            <div className="brand-logo" style={{ 
+                            fontFamily: 'Pacifico, cursive', 
+                            fontWeight: 'bold', 
+                            fontSize: '30px', 
+                            color: '#f8f8ff',
+                            background: 'linear-gradient(45deg, #d7b668, #f8f8ff)',
+                            WebkitBackgroundClip: 'text',
+                        }}>
+                            Pizzeria
+                        </div> 
             </Box>
             <Typography variant="body2" sx={{ color: "#C5C8C9", mb: 3, maxWidth: "400px" }}>
               Welcome to Pizzeria, where authentic Italian flavors meet modern culinary artistry. 
