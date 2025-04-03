@@ -265,26 +265,7 @@ const chooseDishHandler = (id: string) => {
             </Stack>
           </Stack>
         </Container>
-  
-        <div className={"brands-logo"}>
-          <Container className={"family-brands"}>
-            <Box className={"category-title"}>Our Family Brands</Box>
-            <Stack className={"brand-list"}>
-              <Box className={"review-box"}>
-                <img src={"/img/gurme.webp"} />
-              </Box>
-              <Box className={"review-box"}>
-                <img src={"/img/sweets.webp"} />
-              </Box>
-              <Box className={"review-box"}>
-                <img src={"/img/seafood.webp"} />
-              </Box>
-              <Box className={"review-box"}>
-                <img src={"/img/doner.webp"} />
-              </Box>
-            </Stack>
-          </Container>
-        </div>
+
   
         <div className={"address"}>
           <Container>
