@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
-import { Box, Container, Grid, Stack, TextField } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { Dispatch } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import Tabs from "@mui/material/Tabs";
@@ -8,7 +8,6 @@ import TabContext from "@mui/lab/TabContext";
 import PausedOrders from "./PausedOrders";
 
 import FinishedOrders from "./FinishedOrders";
-import LocationOnIcon from "@mui/icons-material/LocationOn"
 import { Order, OrderInquery } from "../../../lib/types/order";
 import { setFinishedOrders, setPausedOrders, setProcessOrders } from "./slice";
 import { OrderStatus } from "../../../lib/enums/order-enum";
@@ -16,8 +15,6 @@ import OrderService from "../../services/OrderService";
 import { useGlobals } from "../../hooks/useGlobals";
 import "../../../css/order.css";
 import { useHistory } from "react-router-dom";
-import { serverApi } from "../../../lib/config";
-import { MemberType } from "../../../lib/enums/member-enum";
 import ProcessOrders from "./ProcessedOrders";
 
 
@@ -86,115 +83,24 @@ export default function OrdersPage() {
                 <FinishedOrders />
               </Stack>
             </TabContext>
-          </Stack>
-
-          <Stack className={"order-right"}>
-            <Box className={"order-info-box"}>
-              <Box className={"member-box"}>
-                <div className={"order-user-img"}>
-                  <img 
-                  src={
-                    authMember?.memberImage 
-                    ? `${serverApi}/${authMember?.memberImage}`
-                    : "/icons/default-user.svg"
-                  }
-                  className={"order-user-avatar"}
-                  alt={""}
-                   />
-                   <div className={"order-user-icon-box"}>
-                  <img 
-                  src={ 
-                    authMember?.memberType === MemberType.RESTAURANT 
-                    ? "/icons/restaurant.svg" 
-                    : "/icons/user-badge.svg"
-                  }
-                  className={"order-user-prof-img"}
-                  alt={""}
-                   />
-                </div>
-                </div>
-                <span className={"order-user-name"}>{authMember?.memberNick}</span>
-                <span className={"order-user-prof"}>{authMember?.memberType}</span>
-              </Box>
-              <Box className={"liner"}></Box>
-              <Box className={"order-user-address"}>
-                <div style={{display: "flex"}}>
-                  <LocationOnIcon />
-                </div>
-                <Box className={"spec-address-txt"}>{
-                authMember?.memberAddress 
-                ? authMember.memberAddress 
-                : "No address"
-                }
-                </Box>
-              </Box>
+            <Box 
+              sx={{ 
+                padding: "20px", 
+                textAlign: "center", 
+                borderTop: "1px solid #e5e7eb",
+                marginTop: "30px"
+              }}
+            >
+              <Typography 
+                sx={{ 
+                  color: "#6b7280", 
+                  fontSize: "14px", 
+                  fontFamily: "'Inter', sans-serif" 
+                }}
+              >
+                View all your orders in one place
+              </Typography>
             </Box>
-            <Stack className="order-card-right">
-              <form style={{height: "auto"}}>
-              <Box className={"card-input"}>
-          <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              placeholder="Card number : 5243 4090 2002 7495"
-              fullWidth
-              InputProps={{
-                sx: {
-                  backgroundColor: "#ffffff",
-                  borderRadius: "10px",
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              placeholder="07 / 24"
-              fullWidth
-              InputProps={{
-                sx: {
-                  backgroundColor: "#ffffff",
-                  borderRadius: "10px",
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={6}>
-            <TextField
-              placeholder="CVV : 010"
-              fullWidth
-              InputProps={{
-                sx: {
-                  backgroundColor: "#ffffff",
-                  borderRadius: "10px",
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <TextField
-              placeholder="Alex Dufresne"
-              fullWidth
-              InputProps={{
-                sx: {
-                  backgroundColor: "#ffffff",
-                  borderRadius: "15px",
-                },
-              }}
-            />
-          </Grid>
-
-          <div className={"cards-box"}>
-              <img src={"/icons/western-card.svg"} />
-              <img src={"/icons/master-card.svg"} />
-              <img src={"/icons/paypal-card.svg"} />
-              <img src={"/icons/visa-card.svg"} />
-          </div>
-        </Grid>
-      </Box>
-              </form>
-            </Stack>
           </Stack>
         </Container>
       </div>

@@ -79,7 +79,6 @@ export default function ChosenProduct(props: ChosenProductProps) {
   return (
     <div className="chosen-product">
       <Typography variant="h1" className="title">
-        Product Detail
       </Typography>
       <Container className="product-container">
         <Stack className="chosen-product-slider">

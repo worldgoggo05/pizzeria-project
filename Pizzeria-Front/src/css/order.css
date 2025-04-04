@@ -1,7 +1,6 @@
-
 .order-page {
 	width: 100%;
-	height: auto;
+	min-height: 40vh;
 	background: #f8f8ff;
 	display: flex;
 }
@@ -11,157 +10,14 @@
 	margin-bottom: 50px;
 	display: flex;
 	flex-direction: row;
+	justify-content: center;
+	min-height: calc(40vh - 10px);
 }
 
 .order-page .order-left {
 	width: 860px;
 	height: auto;
-}
-
-.order-page .order-right {
-	width: 360px;
-	height: auto;
-	margin-top: 86px;
-	margin-left: 30px;
-	display: flex;
-	flex-direction: column;
-}
-
-.order-page .order-right .order-info-box {
-	width: 360px;
-	height: auto;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	background: #f8f8ff;
-	box-shadow: 15px 14px 4px rgba(0, 0, 0, 0.25), inset -1px 0px 16px 13px rgb(24 23 112 / 20%);
-	border-radius: 16px;
-	margin-bottom: 25px;
-}
-
-.order-page .order-right .order-info-box .member-box {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.order-page .order-right .order-info-box .liner {
-	width: 100%;
-	border: 1px solid #a1a1a1;
-	margin-top: 40px;
-	margin-bottom: 8px;
-}
-
-.order-page .order-info-box .order-user-img {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.order-page .order-info-box .order-user-img .order-user-avatar {
-	width: 117px;
-	height: 112px;
-	filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
-	border-radius: 37px;
-}
-
-.order-page .order-info-box .order-user-icon-box {
-	position: absolute;
-	padding: 5px;
-	width: 30px;
-	height: 30px;
-	top: 81%;
-	right: 0;
-	display: flex;
-	background: rgba(0, 0, 0, 0.33);
-	border-radius: 37px;
-}
-
-.order-page .order-user-icon-box .order-user-prof-img {
-	filter: brightness(0) invert(1);
-}
-
-.order-page .order-info-box .order-user-name {
-	margin-top: 10px;
-	font-family: 'Commissioner';
-	font-style: normal;
-	font-weight: 500;
-	font-size: 28px;
-	line-height: 36px;
-	color: #08090d;
-}
-
-.order-page .order-info-box .order-user-prof {
-	font-family: 'Commissioner';
-	font-style: normal;
-	font-weight: 500;
-	font-size: 20px;
-	line-height: 36px;
-	color: #a1a1a1;
-}
-
-.order-page .order-info-box .order-user-address {
-	width: 90%;
-	display: flex;
-	flex-direction: row;
-}
-
-.order-page .order-info-box .spec-address-txt {
-	margin-left: 5px;
-	font-family: 'DM Sans';
-	font-style: normal;
-	font-weight: 400;
-	font-size: 16px;
-	line-height: 24px;
-	color: #616164;
-}
-
-.order-page .order-info-box .card-input {
-	margin-top: 10px;
-	padding: 10px;
-	width: 100%;
-	height: 40px;
-	background: #f5f5f5;
-	border-radius: 10px;
-	font-family: 'Nunito';
-	font-style: normal;
-	font-weight: 400;
-	font-size: 16px;
-	line-height: 22px;
-	border: 0.5px solid #b3a6a6;
-	letter-spacing: -0.02em;
-	color: #434141;
-}
-
-.order-page .order-info-box .card-half-input {
-	margin-top: 10px;
-	padding: 10px;
-	width: 49%;
-	height: 40px;
-	background: #f5f5f5;
-	border-radius: 10px;
-	font-family: 'Nunito';
-	font-style: normal;
-	font-weight: 400;
-	font-size: 16px;
-	line-height: 22px;
-	border: 0.5px solid #b3a6a6;
-	letter-spacing: -0.02em;
-	color: #434141;
-}
-
-.cards-box {
-	margin-top: 35px;
-	width: 80%;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-around;
-}
-
-.order-page .order-info-box .css-wca78v-MuiButtonBase-root-MuiButton-root {
-	min-width: 160px;
+	min-height: 650px;
 }
 
 .order-page .order-left .order-nav-frame {
@@ -200,9 +56,15 @@
 	width: 100%;
 	max-height: 285px;
 	margin-bottom: 25px;
-	background: #f8f8ff;
-	box-shadow: -13px 16px 4px rgba(0, 0, 0, 0.25), inset 0px -3px 20px 11px #18177033;
+	background: #ffffff;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 	border-radius: 16px;
+	transition: all 0.3s ease;
+}
+
+.order-page .order-main-content .order-main-box:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .order-page .order-main-content .order-main-box .order-box-scroll {
@@ -229,116 +91,169 @@
 
 .order-page .order-box-scroll .orders-name-price {
 	position: relative;
-	height: 47px;
-	margin-top: 5px;
-	margin-left: 50px;
+	height: 70px;
+	margin: 8px 24px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	padding: 12px;
+	border-radius: 12px;
+	transition: all 0.2s ease;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.order-page .order-box-scroll .orders-name-price:hover {
+	background: #f9fafb;
 }
 
 .order-page .order-box-scroll .orders-name-price .order-dish-img {
 	position: relative;
-	width: 50px;
-	height: 47px;
-	border-radius: 29px;
+	width: 48px;
+	height: 48px;
+	border-radius: 10px;
 	background-size: cover;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .order-page .order-box-scroll .orders-name-price .title-dish {
 	position: relative;
-	width: 260px;
-	height: 36px;
-	margin-left: 20px;
-	font-family: 'Commissioner';
+	min-width: 180px;
+	max-width: 280px;
+	margin-left: 12px;
+	font-family: 'Inter', sans-serif;
 	font-style: normal;
 	font-weight: 500;
-	font-size: 22px;
-	line-height: 36px;
-	color: #000000;
+	font-size: 16px;
+	line-height: 20px;
+	color: #111827;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .order-page .order-box-scroll .orders-name-price .price-box {
 	position: relative;
-	max-width: 170px;
-	height: 100%;
-	margin-left: 150px;
 	display: flex;
-	flex-direction: row;
 	align-items: center;
-	justify-content: space-between;
+	gap: 4px;
+	margin-left: auto;
+	padding-left: 12px;
+	border-left: 1px solid #e5e7eb;
 }
 
 .order-page .order-box-scroll .orders-name-price .price-box p {
-	font-family: 'Poppins';
+	font-family: 'Inter', sans-serif;
 	font-style: normal;
-	font-weight: 400;
-	font-size: 18px;
-	line-height: 27px;
-	color: #262626;
+	font-weight: 500;
+	font-size: 15px;
+	line-height: 20px;
+	color: #374151;
+	white-space: nowrap;
 }
 
 .order-page .total-price-box {
-	position: relative;
 	width: 100%;
-	height: 41px;
-	margin: 7px 0 7px 0;
+	height: 64px;
+	padding: 0 20px;
 	display: flex;
-	flex-direction: row;
 	align-items: center;
-	justify-content: space-around;
-	box-sizing: border-box;
-	border-radius: 5px;
-	overflow: hidden;
+	justify-content: space-between;
+	border-top: 1px solid #e5e7eb;
+	background: #f9fafb;
+}
+
+.order-page .total-price-box .buttons-container {
+	display: flex;
+	align-items: center;
+	gap: 12px;
 }
 
 .order-page .total-price-box .cancel-button {
-	border-radius: 10px;
-	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-	max-height: 40px;
+	margin-right: 10px;
+	padding: 8px 16px;
+	background: #f3f4f6;
+	border-radius: 8px;
+	color: #4b5563;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	font-size: 14px;
+	border: 1px solid #e5e7eb;
 }
 
-.order-page  .total-price-box .pay-button {
-    display: flex;
-	background: #56b74d;
-	color: #f8f8ff;
-	border-radius: 10px;
-	max-height: 40px;
-	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+.order-page .total-price-box .cancel-button:hover {
+	background: #e5e7eb;
 }
 
-.order-page  .total-price-box .verify-button {
-	background: #0288d1;
-	color: #f8f8ff;
-	border-radius: 10px;
-	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+.order-page .total-price-box .pay-button {
+	padding: 8px 16px;
+	background: #c74a4a;
+	border-radius: 8px;
+	color: white;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	font-size: 14px;
+	border: none;
 }
 
-.order-page  .total-price-box .box-total {
+.order-page .total-price-box .pay-button:hover {
+	background: #e94221;
+}
+
+.order-page .total-price-box .box-total {
 	position: relative;
-	max-width: 535px;
-	height: 100%;
 	display: flex;
-	flex-direction: row;
 	align-items: center;
-	justify-content: center;
+	gap: 16px;
+	flex: 1;
 }
 
 .order-page .total-price-box .box-total p {
-	margin-left: 20px;
-	font-family: 'Commissioner';
+	margin: 0;
+	font-family: 'Inter', sans-serif;
 	font-style: normal;
 	font-weight: 500;
 	font-size: 14px;
-	line-height: 36px;
-	color: #000000;
+	line-height: 20px;
+	color: #374151;
+	white-space: nowrap;
 }
 
 .order-page .total-price-box .box-total .data-compl {
-	font-family: 'Commissioner';
+	font-family: 'Inter', sans-serif;
 	font-style: normal;
-	font-weight: 500;
+	font-weight: 400;
+	font-size: 13px;
+	line-height: 18px;
+	color: #6b7280;
+	white-space: nowrap;
+}
+
+.order-page .total-price-box .price-details {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	color: #374151;
 	font-size: 14px;
-	line-height: 36px;
-	color: #000000;
+}
+
+.order-page .total-price-box .price-details .label {
+	color: #6b7280;
+}
+
+.order-page .total-price-box .price-details .value {
+	font-weight: 500;
+}
+
+.order-page .total-price-box .operator {
+	color: #6b7280;
+	margin: 0 4px;
+}
+
+.order-page .total-price-box .verify-button {
+	margin-left: 10px;
+	background: #878b81;
+	color: #f8f8ff;
+	border-radius: 10px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25), inset 0px 4px 4px rgba(0, 0, 0, 0.25);
 }

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import Button from "@mui/material/Button";
 import { useGlobals } from "../../hooks/useGlobals";
@@ -94,80 +94,96 @@ export function Settings() {
   }
 
   return (
-    <Box className={"settings"}>
-      <Box className={"member-media-frame"}>
-        <img src={memberImage} className={"mb-image"} />
-        <div className={"media-change-box"}>
-          <span style={{marginLeft: "10px"}}>Upload image</span>
-          <p style={{marginLeft: "10px"}}>JPG, JPEG, PNG formats only!</p>
-          <div className={"up-del-box"} style={{marginLeft: "10px"}}>
-            <Button component="label" onChange={handleImageViewer}>
-              <CloudDownloadIcon />
+    <Grid container spacing={4} className="settings-grid">
+      <Grid item xs={12} md={4} className="image-section">
+        <Box className="profile-image-container">
+          <img src={memberImage} className="profile-image" />
+          <div className="upload-overlay">
+            <p>Formats : JPG, JPEG, PNG</p>
+            <Button 
+              component="label" 
+              variant="contained" 
+              startIcon={<CloudDownloadIcon />}
+              onChange={handleImageViewer}
+              className="upload-btn"
+            >
+              Upload Image
               <input type="file" hidden />
             </Button>
           </div>
-        </div>
-      </Box>
-      <Box className={"input-frame"}>
-        <div className={"long-input"}>
-          <label className={"spec-label"}>Username</label>
-          <input
-            className={"spec-input mb-nick"}
-            type="text"
-            placeholder={authMember?.memberNick}
-            value={memberUpdateInput.memberNick}
-            name="memberNick"
-            onChange={memberNickHandler}
-          />
-        </div>
-      </Box>
-      <Box className={"input-frame"}>
-        <div className={"short-input"}>
-          <label className={"spec-label"}>Phone</label>
-          <input
-            className={"spec-input mb-phone"}
-            type="text"
-            placeholder={authMember?.memberPhone}
-            value={memberUpdateInput.memberPhone}
-            name="memberPhone"
-            onChange={memberPhoneHandler}
-          />
-        </div>
-        <div className={"short-input"}>
-          <label className={"spec-label"}>Address</label>
-          <input
-            className={"spec-input  mb-address"}
-            type="text"
-            placeholder={
-              authMember?.memberAddress 
-              ? authMember.memberAddress 
-              : "no address"
-            }
-            value={memberUpdateInput.memberAddress}
-            name="memberAddress"
-            onChange={memberAddressHandler}
-          />
-        </div>
-      </Box>
-      <Box className={"input-frame"}>
-        <div className={"long-input"}>
-          <label className={"spec-label"}>Description</label>
-          <textarea
-            className={"spec-textarea mb-description"}
-            placeholder={
-              authMember?.memberDesc 
-              ? authMember.memberDesc 
-              : "no description"
-            }
-            value={memberUpdateInput.memberDesc}
-            name="memberDesc"
-            onChange={memberDescHandler}
-          />
-        </div>
-      </Box>
-      <Box className={"save-box"}>
-        <Button variant={"contained"} onClick={handleSubmitButton}>Save</Button>
-      </Box>
-    </Box>
+        </Box>
+      </Grid>
+      
+      <Grid item xs={12} md={8} className="form-section">
+        <Box className="form-container">
+          <div className="form-field">
+            <label className="form-label">Username</label>
+            <input
+              className="form-input"
+              type="text"
+              placeholder={authMember?.memberNick}
+              value={memberUpdateInput.memberNick}
+              name="memberNick"
+              onChange={memberNickHandler}
+            />
+          </div>
+          
+          <div className="form-row">
+            <div className="form-field">
+              <label className="form-label">Phone</label>
+              <input
+                className="form-input"
+                type="text"
+                placeholder={authMember?.memberPhone}
+                value={memberUpdateInput.memberPhone}
+                name="memberPhone"
+                onChange={memberPhoneHandler}
+              />
+            </div>
+            
+            <div className="form-field">
+              <label className="form-label">Address</label>
+              <input
+                className="form-input"
+                type="text"
+                placeholder={
+                  authMember?.memberAddress 
+                  ? authMember.memberAddress 
+                  : "no address"
+                }
+                value={memberUpdateInput.memberAddress}
+                name="memberAddress"
+                onChange={memberAddressHandler}
+              />
+            </div>
+          </div>
+          
+          <div className="form-field">
+            <label className="form-label">Description</label>
+            <textarea
+              className="form-textarea"
+              placeholder={
+                authMember?.memberDesc 
+                ? authMember.memberDesc 
+                : "no description"
+              }
+              value={memberUpdateInput.memberDesc}
+              name="memberDesc"
+              onChange={memberDescHandler}
+            />
+          </div>
+          
+          <div className="form-actions">
+            <Button 
+              variant="contained" 
+              onClick={handleSubmitButton}
+              className="save-button"
+            >
+              Save
+            </Button>
+          </div>
+        </Box>
+      </Grid>
+    </Grid>
   );
 }

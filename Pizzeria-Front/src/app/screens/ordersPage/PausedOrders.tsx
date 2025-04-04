@@ -125,10 +125,10 @@ const processOrderHandler = async (e: T) => {
                 <Box className="box-total">
                   <p>Product price</p>
                   <p>${order.orderTotal + order.orderDelivery}</p>
-                  <img src="/icons/plus.svg" style={{ marginLeft: "20px" }} />
+                  <img src="/icons/plus.svg" style={{ marginLeft: "1px" }} />
                   <p>Delivery cost</p>
                   <p>${order.orderDelivery}</p>
-                  <img src="/icons/pause.svg" style={{ marginLeft: "20px" }} />
+                  <img src="/icons/pause.svg" style={{ marginLeft: "1px" }} />
                   <p>Total</p>
                   <p>${order.orderTotal}</p>
                 </Box>
