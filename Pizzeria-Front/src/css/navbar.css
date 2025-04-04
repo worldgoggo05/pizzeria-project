@@ -97,6 +97,7 @@
   animation: parallaxShift 15s ease-in-out infinite;
   position: relative;
   z-index: 10;
+  transition: opacity 0.3s ease-out;
 }
 
 /* Entrance animations */
@@ -253,7 +254,7 @@
 }
 
 .home-navbar .navbar-container .detail .signup .signup-button {
-  width: 170px;
+  width: 140px;
   height: 50px;
   border-radius: 4px;
   background: rgba(25, 118, 210, 0.6);

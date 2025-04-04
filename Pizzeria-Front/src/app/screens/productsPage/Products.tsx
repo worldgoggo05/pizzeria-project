@@ -265,22 +265,6 @@ const chooseDishHandler = (id: string) => {
             </Stack>
           </Stack>
         </Container>
-
-  
-        <div className={"address"}>
-          <Container>
-            <Stack className={"address-area"}>
-              <Box className={"title"}>Our address</Box>
-              <iframe
-                style={{ marginTop: "60px" }}
-                src="https://www.google.com/maps/d/embed?mid=1XK-f2FfchtNWmKA9DGrUzHvnTD8&f=q&source=s_q&hl=pt-BR&geocode&q=Anam-dong%20Seongbuk-Gu%2C%20Seoul%2C%20136-701%20Korea&ie=UTF8&oe=UTF8&msa=0&sll=37.585838%2C127.021353&sspn=0.020749%2C0.028168&ll=37.59253999999999%2C127.02774499999997&spn=0.00777%2C0.013797&z=16&output=embed"
-                width="1320"
-                height="500"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </Stack>
-          </Container>
-        </div>
       </div>
     );
   }

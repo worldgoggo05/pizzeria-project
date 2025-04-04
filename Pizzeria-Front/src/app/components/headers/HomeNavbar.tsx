@@ -5,6 +5,7 @@ import { CartItem } from "../../../lib/types/search";
 import { useGlobals } from "../../hooks/useGlobals";
 import { serverApi } from "../../../lib/config";
 import { Logout } from "@mui/icons-material";
+import { useEffect, useState } from "react";
 
 interface HomeNavbarProps {
     cartItems: CartItem[];
@@ -34,7 +35,28 @@ export default function HomeNavbar(props: HomeNavbarProps) {
         handleCloseLogout,
         handleLogoutRequest} = props
     const {authMember} = useGlobals(); 
+    const [opacity, setOpacity] = useState(1);
 
+    useEffect(() => {
+        const handleScroll = () => {
+            // Start fading at 50px and complete by 300px
+            const scrollRange = 250;
+            const startFade = 50;
+            const currentScroll = window.scrollY;
+            
+            if (currentScroll <= startFade) {
+                setOpacity(1);
+            } else if (currentScroll >= startFade + scrollRange) {
+                setOpacity(0);
+            } else {
+                const fadeProgress = (currentScroll - startFade) / scrollRange;
+                setOpacity(1 - fadeProgress);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     /** Handlers */
    
@@ -142,7 +164,7 @@ export default function HomeNavbar(props: HomeNavbarProps) {
                 </Stack>
             </Stack>
             <Stack className={"header-frame"}>
-                <Stack className={"detail"}>
+                <Stack className={"detail"} style={{ opacity }}>
                     <Box className={"head-main-text"}>
                         World's Greatest Pizza Experience
                     </Box>
