@@ -187,7 +187,7 @@ const chooseDishHandler = (id: string) => {
                 {products.length !== 0 ? (
                   products.map((product:Product) => {
                     const imagePath = `${serverApi}/${product.productImages[0]}`
-                    const sizeVolume = product.productCollection === ProductCollection.DRINK ? product.productVolume + " liter" : product.productSize + " size"
+                    const sizeVolume = product.productCollection === ProductCollection.DRINK ? product.productVolume + " liter" : product.productSize + " Size"
                     return (
                       <Stack key={product._id} className={"product-card"} 
                       onClick={() => chooseDishHandler(product._id)}>

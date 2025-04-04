@@ -321,7 +321,7 @@
 
 .other-navbar {
   width: 100%;
-  height: 400px;
+  height: 250px;
   display: flex;
   background: url('/public/img/main-hero.jpg');
   background-size: cover;
