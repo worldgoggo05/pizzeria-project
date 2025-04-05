@@ -74,7 +74,7 @@ export default function OtherNavbar(props: OtherNavbarProps) {
                 </Box>
                 ) : null}
                 <Box className={"hover-line"}>
-                    <NavLink to={'/help'} activeClassName="underline">Help</NavLink>
+                    <NavLink to={'/cal-ai'} activeClassName="underline">Cal AI</NavLink>
                 </Box>
                 {/* BASKET */}
                 <Basket cartItems={cartItems} onAdd={onAdd}  onRemove={onRemove} onDeleteAll={onDeleteAll} onDelete={onDelete}  />

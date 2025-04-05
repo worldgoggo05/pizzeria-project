@@ -1,0 +1,20 @@
+.calai-page {
+  width: 100%;
+  min-height: 600px;
+  display: flex;
+  background: #f8f8ff;
+}
+
+.calai-page .calai-container {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  flex-direction: row;
+}
+
+.calai-page .calai-content {
+  width: 100%;
+  min-height: 500px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}

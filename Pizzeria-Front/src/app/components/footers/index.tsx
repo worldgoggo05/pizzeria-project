@@ -86,7 +86,7 @@ export default function Footer() {
               <FooterLink to="/">Home</FooterLink>
               <FooterLink to="/products">Products</FooterLink>
               {authMember && <FooterLink to="/orders">Orders</FooterLink>}
-              <FooterLink to="/help">Help</FooterLink>
+              <FooterLink to="/cal-ai">Cal AI</FooterLink>
             </Box>
           </Grid>
 
