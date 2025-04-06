@@ -1,112 +1,185 @@
 <%- include('includes/header') %>
 
 <link rel="stylesheet" type="text/css" href="/css/signup.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <body>
   <div class="signup-container">
-    <form
-      onsubmit="return validateSignupForm()"
-      action="/admin/signup"
-      method="POST"
-      enctype="multipart/form-data"
-    >
-      <div class="signup-frame" style="width: 650px">
-        <div class="signup-top">
-          <span>Signup</span>
-          <div>Go back <a href="/admin" style="color: #6440fb">Home</a></div>
-          <p>
-            Already signed up?
-            <a href="/admin/login" style="color: #6440fb">Login</a>
-          </p>
+    <div class="pizza-animation">
+      <i class="fas fa-pizza-slice pizza-icon"></i>
+    </div>
+    
+    <form class="signup-frame" onsubmit="return validateSignupForm()" action="/admin/signup" method="POST" enctype="multipart/form-data">
+      <div class="signup-top">
+        <h1>Create Account</h1>
+        <div class="breadcrumb">
+          <a href="/admin"><i class="fas fa-home"></i> Home</a>
+          <span class="separator">|</span>
+          <a href="/admin/login">Login</a>
         </div>
+      </div>
 
-        <div class="sign-input-frame" style="justify-content: space-between">
-          <div class="sign-up-frame">
-            <label>Restaurant *</label>
-            <input
-              type="text"
-              name="memberNick"
-              class="member-nick"
-              placeholder="Username"
-              value=""
-            />
-          </div>
-          <div class="sign-up-frame">
-            <label>Phone *</label>
-            <input
-              type="text"
-              name="memberPhone"
-              class="member-phone"
-              placeholder="Phone"
-              value=""
-            />
-          </div>
-        </div>
-        <div class="sign-input-frame" style="justify-content: space-between">
-          <div class="sign-up-frame">
-            <label>Password *</label>
-            <input
-              type="password"
-              name="memberPassword"
-              class="member-password"
-              placeholder="Password"
-              value=""
-            />
-          </div>
-          <div class="sign-up-frame">
-            <label>Repeat password *</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              class="confirm-password"
-              placeholder="Repeat password"
-              value=""
-            />
-          </div>
-        </div>
-
-        <div class="signup-input-frame">
-          <div class="media-frame">
-            <img class="upload-img-frame" src="/img/default.jpeg" />
-            <div class="upload-container">
-              <span class="media-text">Product image</span>
-              <div
-                class="file-box bs3-primary preview-image"
-                style="margin-top: 25px; display: flex"
-              >
+      <div class="signup-content">
+        <div class="compact-form">
+          <div class="form-row">
+            <div class="input-group">
+              <label for="memberNick">Restaurant <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <i class="fas fa-store"></i>
                 <input
-                  class="upload-name"
-                  value="Choose image"
-                  disabled="disabled"
-                />
-                <label for="input-file" class="file-input-label"
-                  >Upload Image</label
-                >
-                <input
-                  type="file"
-                  id="input-file"
-                  class="upload-hidden form-control-file member-image"
-                  name="memberImage"
+                  type="text"
+                  id="memberNick"
+                  name="memberNick"
+                  class="member-nick"
+                  placeholder="Restaurant name"
+                  value=""
+                  required
                 />
               </div>
-              <p class="thumbnail-desc">
-                Please upload restaurant image.<br />
-                Attention only:.jpg, .jpeg, or .png. <br />
-                formats allowed!
-              </p>
+            </div>
+            <div class="input-group">
+              <label for="memberPhone">Phone <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <i class="fas fa-phone"></i>
+                <input
+                  type="text"
+                  id="memberPhone"
+                  name="memberPhone"
+                  class="member-phone"
+                  placeholder="Contact number"
+                  value=""
+                  required
+                />
+              </div>
             </div>
           </div>
+          
+          <div class="form-row">
+            <div class="input-group">
+              <label for="memberPassword">Password <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <i class="fas fa-lock"></i>
+                <input
+                  type="password"
+                  id="memberPassword"
+                  name="memberPassword"
+                  class="member-password"
+                  placeholder="Create password"
+                  value=""
+                  required
+                />
+                <i class="far fa-eye toggle-password" data-target="memberPassword"></i>
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="confirmPassword">Confirm <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <i class="fas fa-lock"></i>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  class="confirm-password"
+                  placeholder="Confirm password"
+                  value=""
+                  required
+                />
+                <i class="far fa-eye toggle-password" data-target="confirmPassword"></i>
+              </div>
+            </div>
+          </div>
+          
+          <div class="compact-upload">
+            <div class="upload-title">
+              <i class="fas fa-image"></i> Restaurant Photo
+            </div>
+            
+            <div class="upload-content">
+              <div class="image-preview">
+                <img class="upload-img-frame" src="/img/default.jpeg" id="preview-image" />
+                <div class="image-overlay">
+                  <i class="fas fa-camera"></i>
+                </div>
+              </div>
+              
+              <div class="upload-controls">
+                <div class="file-input-wrapper">
+                  <input class="upload-name" value="Choose image" disabled="disabled" />
+                  <label for="input-file" class="file-input-label">
+                    <i class="fas fa-upload"></i> Upload
+                  </label>
+                  <input
+                    type="file"
+                    id="input-file"
+                    class="upload-hidden form-control-file member-image"
+                    name="memberImage"
+                    accept=".jpg,.jpeg,.png"
+                  />
+                </div>
+                <div class="helper-text">
+                  <i class="fas fa-info-circle"></i>
+                  Accepted: .jpg, .jpeg, .png
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <input name="memberType" value="RESTAURANT" hidden />
+
+          <button class="signup-btn btn" name="signup" type="submit">
+            <i class="fas fa-user-plus"></i> Create Account
+          </button>
+          
+          <div class="login-prompt">
+            Already have an account? <a href="/admin/login" class="login-link">Log in</a>
+          </div>
         </div>
-
-        <input name="memberType" value="RESTAURANT" hidden />
-
-        <button class="signup-btn btn" name="signup" type="submit">
-          Signup
-        </button>
       </div>
     </form>
   </div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Ensure consistent field alignment
+      const labelHeight = Math.max(
+        ...Array.from(document.querySelectorAll('.input-group label')).map(el => el.offsetHeight)
+      );
+      document.querySelectorAll('.input-group label').forEach(label => {
+        label.style.height = labelHeight + 'px';
+      });
+      
+      // Preview image when selected
+      const imgInput = document.getElementById('input-file');
+      const imgPreview = document.getElementById('preview-image');
+      const uploadName = document.querySelector('.upload-name');
+      
+      imgInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            imgPreview.src = e.target.result;
+          }
+          reader.readAsDataURL(file);
+          uploadName.value = file.name;
+        }
+      });
+      
+      // Toggle password visibility
+      const toggleButtons = document.querySelectorAll('.toggle-password');
+      toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const targetId = this.getAttribute('data-target');
+          const input = document.getElementById(targetId);
+          const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+          input.setAttribute('type', type);
+          this.classList.toggle('fa-eye');
+          this.classList.toggle('fa-eye-slash');
+        });
+      });
+    });
+  </script>
+  
   <script type="text/javascript" src="/js/signup.js"></script>
 </body>
 
