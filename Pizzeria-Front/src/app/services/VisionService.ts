@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { openRouterApiKey } from '../../lib/config';
 
-// Hardcoded API key for consistent operation
-const FALLBACK_KEY = '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';
+// Use environment variable API key without hardcoded fallback
+const FALLBACK_KEY = openRouterApiKey || '';
 
 export interface FoodAnalysisResult {
   foodName: string;
@@ -20,10 +21,10 @@ export interface OpenRouterModelConfig {
 }
 
 class VisionService {
-  // Configuration for OpenRouter with Claude 3 Sonnet as default and hardcoded key
+  // Configuration for OpenRouter with Gemini Pro Vision as default
   private config: OpenRouterModelConfig = {
-    modelId: 'anthropic/claude-3-sonnet-20240229',  // Claude 3 Sonnet as default
-    apiKey: FALLBACK_KEY  // Always use the hardcoded fallback key
+    modelId: 'google/gemini-pro-vision',  // Use regular Gemini Pro Vision model
+    apiKey: FALLBACK_KEY  // Use environment variable or fallback
   };
 
   // Method to update the configuration
@@ -31,24 +32,41 @@ class VisionService {
     this.config = { 
       ...this.config, 
       ...newConfig,
-      // Always ensure we use the hardcoded key for consistency
-      apiKey: FALLBACK_KEY,
-      // Always use Claude 3 Sonnet as the model
-      modelId: 'anthropic/claude-3-sonnet-20240229'
+      // Always ensure we use the environment API key or fallback
+      apiKey: newConfig.apiKey || openRouterApiKey || FALLBACK_KEY,
+      // Always use Gemini Pro Vision as the model
+      modelId: 'google/gemini-pro-vision'
     };
     
     // Log the updated config
-    console.log("Updated model config. Using Claude 3 Sonnet with hardcoded API key");
+    console.log("Updated model config. Using Google Gemini Pro Vision with API key from environment");
   }
 
-  // Convert base64 image to correct format for API
-  private prepareImageData(base64Image: string): string {
-    // OpenRouter requires a proper data URL format
+  // Prepare the image data in the format expected by OpenRouter
+  prepareImageData(base64Image: string): string {
+    // If it's already a data URL, ensure it's properly formatted
     if (base64Image.startsWith('data:image')) {
-      return base64Image; // Already in correct format
+      // Remove any query params or fragments that might be present
+      const cleanDataURL = base64Image.split('#')[0].split('?')[0];
+      
+      console.log(`Preparing image data: Data URL detected (${cleanDataURL.substring(0, 30)}...)`);
+      return cleanDataURL;
     }
-    // If it's just a base64 string without data URL prefix, add it
-    return `data:image/jpeg;base64,${base64Image}`;
+    
+    // If it's a base64 string without the data URL prefix, add it
+    if (base64Image.match(/^[A-Za-z0-9+/=]+$/)) {
+      console.log(`Preparing image data: Adding data URL prefix to base64 string`);
+      return `data:image/jpeg;base64,${base64Image}`;
+    }
+    
+    // If it's neither, it might be a URL or invalid data
+    if (base64Image.startsWith('http')) {
+      console.log(`Preparing image data: External URL detected (${base64Image.substring(0, 30)}...)`);
+      return base64Image;
+    }
+    
+    console.warn(`Preparing image data: Unrecognized image format. Attempting to use as-is.`);
+    return base64Image;
   }
 
   // Check if this is a pizza image (for special handling)
@@ -73,44 +91,60 @@ class VisionService {
     return hasPizzaWord || hasPizzaSignature;
   }
 
-  // Get the API key - always use the hardcoded key
+  // Get the API key - use environment variable or fallback
   private getApiKey(): string {
-    return FALLBACK_KEY;
+    return this.config.apiKey || openRouterApiKey || FALLBACK_KEY;
   }
 
   // Log API key details (for debugging purposes)
   logApiKeyStatus() {
-    // Always use the hardcoded key
-    const apiKey = FALLBACK_KEY;
-    console.log("Using hardcoded API key");
+    // Use environment variable or fallback
+    const apiKey = this.config.apiKey || openRouterApiKey || FALLBACK_KEY;
+    console.log("Using API key from environment or fallback");
+    console.log("API key present:", !!apiKey);
+    console.log("API key from env:", !!openRouterApiKey);
     return apiKey;
   }
 
   // Analyze food image using OpenRouter
   async analyzeFood(base64Image: string): Promise<FoodAnalysisResult> {
     // Always use the real API implementation, never the mock
-    console.log("Using real API implementation");
     
-    // Always use the hardcoded key for reliability
-    const apiKey = FALLBACK_KEY;
-    
+    // Generate a unique request ID for this request
+    const requestId = `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    console.log(`Request ${requestId}: Starting food analysis`);
+
+    // Prepare the image data for API request
     const imageUrl = this.prepareImageData(base64Image);
+    if (!imageUrl) {
+      console.error(`Request ${requestId}: Failed to prepare image data`);
+      return this.mockAnalyzeFood(base64Image);
+    }
     
-    // Generate a unique ID for this request to prevent caching
-    const requestId = Date.now().toString();
+    console.log(`Request ${requestId}: Image data prepared successfully`);
+
+    // Validate API key before making the request
+    const apiKey = this.config.apiKey || openRouterApiKey || FALLBACK_KEY;
+    if (!apiKey) {
+      console.error(`Request ${requestId}: No API key available, using fallback implementation`);
+      return this.mockAnalyzeFood(base64Image);
+    }
     
     try {
-      console.log(`Request ${requestId}: Making API request to OpenRouter with Claude 3 Sonnet model`);
+      console.log(`Request ${requestId}: Making API request to OpenRouter with Google Gemini Pro Vision model`);
       
-      // Simplified request for OpenRouter
+      // Simplified request for OpenRouter - updated to match latest API structure for Gemini
       const requestData = {
-        model: 'anthropic/claude-3-sonnet-20240229', // Force Claude 3 Sonnet
+        model: 'google/gemini-pro-vision', // Use standard Gemini Pro Vision
         messages: [
           {
-            role: 'system',
-            content: `You are a nutrition expert specialized in analyzing food images.
+            role: 'user',
+            content: [
+              { 
+                type: 'text', 
+                text: `You are a nutrition expert specialized in analyzing food images.
 
-TASK: Identify the specific food in the image and provide accurate nutritional information tailored to what you see.
+Please analyze this food image and provide detailed nutritional information tailored to what you see.
 
 IMPORTANT:
 - Your analysis must be unique and specific to the exact food shown in this particular image
@@ -120,7 +154,7 @@ IMPORTANT:
 - If you're uncertain about exact values, provide reasonable estimates based on what you see
 
 FORMAT: Respond as a JSON object with these fields:
-- foodName: The specific name of the food (be precise about variety, e.g. "Hawaiian Pizza" not just "Pizza")
+- foodName: The specific name of the food (be precise, e.g. "Hawaiian Pizza" not just "Pizza")
 - calories: Estimated calories for the portion shown
 - protein: Protein content in grams
 - carbs: Carbohydrate content in grams
@@ -128,26 +162,19 @@ FORMAT: Respond as a JSON object with these fields:
 - ingredients: Array of all visible ingredients
 
 Request ID: ${requestId}`
-          },
-          {
-            role: 'user',
-            content: [
-              { 
-                type: 'text', 
-                text: `Please analyze this food image and provide detailed nutritional information. 
-Be specific to exactly what you see in this particular image - don't use generic values.
-Respond with a JSON object: {"foodName": "name", "calories": number, "protein": number, "carbs": number, "fat": number, "ingredients": ["ingredient1", "ingredient2", ...]}
-Request ID: ${requestId}`
               },
               { 
                 type: 'image_url', 
-                image_url: { url: imageUrl } 
+                image_url: { 
+                  url: imageUrl,
+                  mime_type: "image/jpeg"
+                } 
               }
             ]
           }
         ],
         max_tokens: 1024,
-        temperature: 0.7, // Add some temperature to avoid fixed responses
+        temperature: 0.2,
         // Add timestamp to prevent caching
         user: `user-${requestId}`
       };
@@ -156,164 +183,323 @@ Request ID: ${requestId}`
 
       // Log some details about the image to help with debugging
       console.log(`Request ${requestId}: Image URL type:`, typeof imageUrl);
-      console.log(`Request ${requestId}: Image URL starts with:`, imageUrl.substring(0, 30) + '...');
-      console.log(`Request ${requestId}: Image URL length:`, imageUrl.length);
-
+      console.log(`Request ${requestId}: Image URL starts with:`, imageUrl.substring(0, 30));
+      
+      // Make the API request
       try {
-        // Make the API request with robust error handling
-        const response = await axios({
-          method: 'POST',
-          url: 'https://openrouter.ai/api/v1/chat/completions',
-          headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': window.location.origin,
-            'X-Title': `Pizzeria Food Analysis ${requestId}`,
-            'X-Request-ID': requestId,
-            'Origin': window.location.origin,
-            'Accept': 'application/json'
-          },
-          data: requestData,
-          timeout: 90000, // Increase timeout to 90 seconds (some vision models take longer)
-          validateStatus: function (status) {
-            return status >= 200 && status < 600; // Allow all status codes to be handled in code
+        console.log(`Request ${requestId}: Sending request to OpenRouter API`);
+        
+        const response = await axios.post(
+          'https://openrouter.ai/api/v1/chat/completions',
+          requestData,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`,
+              'HTTP-Referer': 'https://pizzeria-front.vercel.app/',
+              'X-Title': 'Pizzeria Front'
+            },
+            timeout: 90000 // 90 seconds
           }
-        });
-
-        // Check if we got a successful response
-        if (response.status >= 400) {
-          console.error(`Request ${requestId}: API returned error status:`, response.status);
-          console.error(`Request ${requestId}: Error details:`, response.data);
-          throw new Error(`API error: ${response.status} - ${response.data?.error?.message || 'Unknown error'}`);
-        }
-
-        console.log(`Request ${requestId}: Received response from OpenRouter:`, response.status);
+        );
         
-        // Extract response content
-        const content = response.data.choices?.[0]?.message?.content || '';
-        console.log(`Request ${requestId}: Raw response content (first 100 chars):`, content.substring(0, 100) + '...');
+        console.log(`Request ${requestId}: Response received successfully`);
         
-        // Try to parse JSON from the response
-        try {
-          // Look for JSON in the content
-          const jsonMatch = content.match(/\{[\s\S]*\}/);
-          const jsonString = jsonMatch ? jsonMatch[0] : content;
+        // Log the status code and brief info about the response
+        console.log(`Request ${requestId}: Status Code: ${response.status}`);
+        console.log(`Request ${requestId}: Data received:`, response.data ? 'Yes' : 'No');
+        
+        // Process the response
+        if (response.data && response.data.choices && response.data.choices.length > 0) {
+          console.log(`Request ${requestId}: Response has valid structure`);
           
-          const parsedResult = JSON.parse(jsonString);
+          const content = response.data.choices[0].message.content;
+          console.log(`Request ${requestId}: Response content (excerpt):`, content.substring(0, 100) + "...");
           
-          // Log the parsed result to verify we're getting unique results
-          console.log(`Request ${requestId}: Parsed result:`, parsedResult);
-          
-          return this.validateAndNormalizeResult(parsedResult);
-        } catch (parseError) {
-          console.warn(`Request ${requestId}: Failed to parse JSON response:`, parseError);
-          return this.extractResultFromText(content);
+          try {
+            // Try to extract the result from the text
+            const result = this.extractResultFromText(content);
+            console.log(`Request ${requestId}: Successfully extracted result`);
+            return result;
+          } catch (parseError) {
+            console.error(`Request ${requestId}: Failed to parse response content:`, parseError);
+            // Try alternative endpoint if parsing fails
+            console.log(`Request ${requestId}: Falling back to alternative endpoint due to parsing failure`);
+            return this.tryAlternativeEndpoint(base64Image, requestId);
+          }
+        } else {
+          console.error(`Request ${requestId}: Response missing expected content structure:`, response.data);
+          // Try alternative endpoint if response structure is invalid
+          console.log(`Request ${requestId}: Falling back to alternative endpoint due to invalid response structure`);
+          return this.tryAlternativeEndpoint(base64Image, requestId);
         }
       } catch (axiosError: any) {
-        // Network error or other Axios error
-        console.error(`Request ${requestId}: Network error:`, axiosError.message);
+        // Handle axios errors with detailed logging
+        console.error(`Request ${requestId}: API request failed:`, axiosError.message);
         
-        // If this is a Network Error, let's fall back to mock implementation
-        if (axiosError.message === 'Network Error') {
-          console.log(`Request ${requestId}: Network error detected, using mock implementation as fallback`);
-          return this.mockAnalyzeFood(base64Image);
-        }
-        
+        // Enhanced error information based on axios error
         if (axiosError.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.error(`Request ${requestId}: API Error Status:`, axiosError.response.status);
-          console.error(`Request ${requestId}: API Error Data:`, axiosError.response.data);
-          throw new Error(`API error: ${axiosError.response.status} - ${axiosError.response.data?.error?.message || axiosError.message}`);
+          console.error(`Request ${requestId}: Server responded with error:`, {
+            status: axiosError.response.status,
+            statusText: axiosError.response.statusText,
+            data: axiosError.response.data
+          });
+          
+          // Check for specific error types
+          if (axiosError.response.status === 429) {
+            console.error(`Request ${requestId}: Rate limit exceeded (429)`);
+          } else if (axiosError.response.status === 401 || axiosError.response.status === 403) {
+            console.error(`Request ${requestId}: Authentication error (${axiosError.response.status})`);
+          } else if (axiosError.response.status === 404) {
+            console.error(`Request ${requestId}: Endpoint not found (404)`);
+          } else if (axiosError.response.status === 500) {
+            console.error(`Request ${requestId}: Server error (500)`);
+          }
+          
+          // Check for specific error messages in response data
+          if (axiosError.response.data && axiosError.response.data.error) {
+            const errorMessage = axiosError.response.data.error.message || axiosError.response.data.error;
+            console.error(`Request ${requestId}: API Error message:`, errorMessage);
+            
+            // Handle insufficient quota errors more specifically
+            if (errorMessage.includes('insufficient_quota') || errorMessage.includes('quota')) {
+              console.error(`Request ${requestId}: API quota exceeded`);
+            }
+          }
         } else if (axiosError.request) {
           // The request was made but no response was received
-          console.error(`Request ${requestId}: No response received from API`);
-          throw new Error('No response received from API. Check your network connection.');
+          console.error(`Request ${requestId}: No response received from server:`, axiosError.request);
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.error(`Request ${requestId}: Error setting up request:`, axiosError.message);
-          throw new Error(`Error setting up request: ${axiosError.message}`);
+          console.error(`Request ${requestId}: Error in request setup:`, axiosError.message);
+        }
+        
+        // Try alternative endpoint
+        console.log(`Request ${requestId}: Falling back to alternative endpoint due to API error`);
+        return this.tryAlternativeEndpoint(base64Image, requestId);
+      }
+    } catch (generalError: any) {
+      // Handle any other errors that might occur
+      console.error(`Request ${requestId}: Unexpected error during API request:`, generalError);
+      
+      // Try alternative endpoint
+      console.log(`Request ${requestId}: Falling back to alternative endpoint due to unexpected error`);
+      return this.tryAlternativeEndpoint(base64Image, requestId);
+    }
+  }
+
+  // Try an alternative endpoint as a fallback
+  private async tryAlternativeEndpoint(base64Image: string, requestId: string): Promise<FoodAnalysisResult> {
+    console.log(`Request ${requestId}: Attempting to use alternative OpenRouter endpoint`);
+    
+    try {
+      // Try a different endpoint structure
+      const alternativeUrl = 'https://openrouter.ai/api/chat/completions';
+      
+      // Prepare the image data
+      const imageUrl = this.prepareImageData(base64Image);
+      
+      // Use a more detailed, structured request similar to the main method
+      const response = await axios.post(
+        alternativeUrl,
+        {
+          model: 'google/gemini-pro-vision',
+          messages: [
+            { 
+              role: 'user', 
+              content: [
+                { 
+                  type: 'text', 
+                  text: `You are a nutrition expert specialized in analyzing food images.
+
+Please analyze this food image and provide detailed nutritional information tailored to what you see.
+
+IMPORTANT:
+- Your analysis must be unique and specific to the exact food shown in this particular image
+- Never provide generic or default values
+- Look carefully at portion sizes, ingredients, and preparation methods visible in the image
+- Include all visible ingredients in your analysis
+- If you're uncertain about exact values, provide reasonable estimates based on what you see
+
+FORMAT: Respond as a JSON object with these fields:
+- foodName: The specific name of the food (be precise, e.g. "Hawaiian Pizza" not just "Pizza")
+- calories: Estimated calories for the portion shown
+- protein: Protein content in grams
+- carbs: Carbohydrate content in grams
+- fat: Fat content in grams
+- ingredients: Array of all visible ingredients
+
+Request ID: ${requestId}`
+                },
+                { 
+                  type: 'image_url', 
+                  image_url: { 
+                    url: imageUrl,
+                    mime_type: "image/jpeg"
+                  } 
+                }
+              ]
+            }
+          ],
+          max_tokens: 1024,
+          temperature: 0.2,
+          // Add timestamp to prevent caching
+          user: `user-${requestId}`
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${this.config.apiKey || FALLBACK_KEY}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': 'https://pizzeria-front.vercel.app/',
+            'X-Title': 'Pizzeria Food Analyzer'
+          },
+          timeout: 90000
+        }
+      );
+      
+      console.log(`Request ${requestId}: Alternative endpoint response received:`, 
+        response.status, 
+        response.data ? 'Data received' : 'No data'
+      );
+      
+      if (response.data && response.data.choices && response.data.choices[0]) {
+        const content = response.data.choices[0].message.content;
+        console.log(`Request ${requestId}: Raw response content:`, content.substring(0, 100) + '...');
+        return this.extractResultFromText(content);
+      } else {
+        console.error(`Request ${requestId}: Alternative endpoint response missing expected content structure`);
+      }
+    } catch (error) {
+      console.error(`Request ${requestId}: Alternative endpoint also failed:`, error);
+    }
+    
+    // If the alternative endpoint also fails, use mock implementation
+    console.log(`Request ${requestId}: Falling back to mock implementation as both primary and alternative endpoints failed`);
+    return this.mockAnalyzeFood(base64Image);
+  }
+
+  // Extract structured result from model text response
+  private extractResultFromText(text: string): FoodAnalysisResult {
+    console.log("Extracting result from text response");
+    
+    try {
+      // First, try to find a JSON object in the response
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      
+      if (jsonMatch) {
+        // Try to parse the JSON object
+        try {
+          const jsonObject = JSON.parse(jsonMatch[0]);
+          console.log("Successfully parsed JSON object:", jsonObject);
+          
+          // Validate and normalize the result
+          return this.validateAndNormalizeResult(jsonObject);
+        } catch (jsonError) {
+          console.error("Failed to parse JSON object:", jsonError);
         }
       }
-    } catch (error: any) {
-      console.error(`Request ${requestId}: Error analyzing image with OpenRouter:`, error);
       
-      // Try to provide a helpful error message
-      const errorMessage = error.message || 'Failed to analyze image';
-      console.error(`Request ${requestId}: Error message:`, errorMessage);
+      // If JSON parsing failed or no JSON found, try to extract key information using regular expressions
+      console.log("Attempting to extract information using regular expressions");
       
-      // If this is a fatal error, fall back to mock implementation
-      console.log(`Request ${requestId}: Error occurred, using mock implementation as fallback`);
-      return this.mockAnalyzeFood(base64Image);
-    }
-  }
-
-  // Validate and normalize the result to ensure it matches our interface
-  private validateAndNormalizeResult(result: any): FoodAnalysisResult {
-    // Log the raw result to verify uniqueness
-    console.log("Validating result:", result);
-    
-    // Generate a unique ID for this analysis to verify it's not cached
-    const analysisId = Date.now().toString();
-    console.log("Analysis ID:", analysisId);
-    
-    // Check for suspicious values that might indicate a hardcoded response
-    const suspiciousValues = [
-      result.calories === 350 && result.protein === 15 && result.carbs === 30 && result.fat === 10,
-      !result.foodName || result.foodName === "Food Item" || result.foodName === "Unknown Food"
-    ];
-    
-    if (suspiciousValues.some(v => v)) {
-      console.warn("Detected potentially hardcoded values in the response");
-    }
-    
-    return {
-      foodName: result.foodName || 'Unknown Food',
-      calories: Number(result.calories) || 0,
-      protein: Number(result.protein) || 0,
-      carbs: Number(result.carbs) || 0,
-      fat: Number(result.fat) || 0,
-      ingredients: Array.isArray(result.ingredients) ? result.ingredients : [],
-      confidence: result.confidence || 1.0
-    };
-  }
-
-  // Extract result from text if JSON parsing fails
-  private extractResultFromText(content: string): FoodAnalysisResult {
-    // Attempt to parse food name and nutritional info from text
-    const foodNameMatch = content.match(/food(?:Name)?:\s*["']?([^"'\n,]+)["']?/i);
-    const caloriesMatch = content.match(/calories:\s*(\d+)/i);
-    const proteinMatch = content.match(/protein:\s*(\d+)/i);
-    const carbsMatch = content.match(/carbs?(?:\w+)?:\s*(\d+)/i);
-    const fatMatch = content.match(/fat:\s*(\d+)/i);
-    
-    // Extract ingredients if available
-    const ingredientsPattern = /ingredients:\s*\[([^\]]*)\]/i;
-    const ingredientsMatch = content.match(ingredientsPattern);
-    let ingredients: string[] = [];
-    
-    if (ingredientsMatch && ingredientsMatch[1]) {
-      // Try to parse the ingredients array
-      try {
-        ingredients = JSON.parse(`[${ingredientsMatch[1]}]`);
-      } catch (e) {
-        // If parsing fails, try to split by commas
-        ingredients = ingredientsMatch[1].split(',').map(item => 
-          item.trim().replace(/^["']|["']$/g, '')
-        ).filter(Boolean);
+      // Extract food name
+      const foodNameMatch = text.match(/food[^:]*:.*?["']([^"']+)["']/i) || 
+                           text.match(/food[^:]*:[^"']*["']?([^"',\n]+)["']?/i) ||
+                           text.match(/name[^:]*:.*?["']([^"']+)["']/i);
+      
+      // Extract nutritional values
+      const caloriesMatch = text.match(/calories?[^:]*:.*?(\d+)/i);
+      const proteinMatch = text.match(/protein[^:]*:.*?(\d+)/i);
+      const carbsMatch = text.match(/carbs?[^:]*:.*?(\d+)/i);
+      const fatMatch = text.match(/fat[^:]*:.*?(\d+)/i);
+      
+      // Extract ingredients
+      const ingredientsText = text.match(/ingredients?[^:]*:.*?\[(.*?)\]/i);
+      let ingredients: string[] = [];
+      
+      if (ingredientsText && ingredientsText[1]) {
+        ingredients = ingredientsText[1]
+          .split(',')
+          .map(ingredient => 
+            ingredient
+              .replace(/["']/g, '')
+              .trim()
+          )
+          .filter(ingredient => ingredient.length > 0);
       }
+      
+      // Construct and return the result
+      const result: FoodAnalysisResult = {
+        foodName: foodNameMatch ? foodNameMatch[1] : "Unidentified Food",
+        calories: caloriesMatch ? parseInt(caloriesMatch[1], 10) : 0,
+        protein: proteinMatch ? parseInt(proteinMatch[1], 10) : 0,
+        carbs: carbsMatch ? parseInt(carbsMatch[1], 10) : 0,
+        fat: fatMatch ? parseInt(fatMatch[1], 10) : 0,
+        ingredients: ingredients.length > 0 ? ingredients : ["Unknown"],
+        confidence: 0.7  // Medium confidence for regex extraction
+      };
+      
+      console.log("Extracted result using regex:", result);
+      return result;
+    } catch (error) {
+      console.error("Failed to extract result from text:", error);
+      
+      // Fallback to a basic result
+      return {
+        foodName: "Food Analysis Result",
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        ingredients: ["Could not determine ingredients"],
+        confidence: 0.1
+      };
+    }
+  }
+  
+  // Validate and normalize an API result
+  private validateAndNormalizeResult(data: any): FoodAnalysisResult {
+    console.log("Validating and normalizing result:", data);
+    
+    // Initialize with default values to prevent undefined
+    const result: FoodAnalysisResult = {
+      foodName: typeof data.foodName === 'string' ? data.foodName : "Unidentified Food",
+      calories: typeof data.calories === 'number' ? data.calories : 
+               typeof data.calories === 'string' ? parseInt(data.calories, 10) : 0,
+      protein: typeof data.protein === 'number' ? data.protein : 
+              typeof data.protein === 'string' ? parseInt(data.protein, 10) : 0,
+      carbs: typeof data.carbs === 'number' ? data.carbs : 
+             typeof data.carbs === 'string' ? parseInt(data.carbs, 10) : 0,
+      fat: typeof data.fat === 'number' ? data.fat : 
+           typeof data.fat === 'string' ? parseInt(data.fat, 10) : 0,
+      ingredients: Array.isArray(data.ingredients) ? data.ingredients : ["Unknown"],
+      confidence: typeof data.confidence === 'number' ? data.confidence : 0.9
+    };
+    
+    // Ensure numbers are reasonable
+    result.calories = Math.max(0, Math.min(5000, result.calories));
+    result.protein = Math.max(0, Math.min(500, result.protein));
+    result.carbs = Math.max(0, Math.min(500, result.carbs));
+    result.fat = Math.max(0, Math.min(500, result.fat));
+    
+    // Filter out empty ingredients (ingredients is guaranteed to be initialized)
+    if (result.ingredients && result.ingredients.length > 0) {
+      result.ingredients = result.ingredients
+        .map(ingredient => (typeof ingredient === 'string' ? ingredient.trim() : String(ingredient)))
+        .filter(ingredient => ingredient.length > 0);
+      
+      // Add "Unknown" if the filtered list is empty
+      if (result.ingredients.length === 0) {
+        result.ingredients = ["Unknown"];
+      }
+    } else {
+      result.ingredients = ["Unknown"];
     }
     
-    // Use -1 as a indicator that we couldn't parse values properly
-    // This will help identify if we're getting proper results
-    return {
-      foodName: foodNameMatch?.[1] || 'Could not identify food',
-      calories: caloriesMatch?.[1] ? parseInt(caloriesMatch[1]) : -1,
-      protein: proteinMatch?.[1] ? parseInt(proteinMatch[1]) : -1,
-      carbs: carbsMatch?.[1] ? parseInt(carbsMatch[1]) : -1,
-      fat: fatMatch?.[1] ? parseInt(fatMatch[1]) : -1,
-      ingredients
-    };
+    console.log("Validated and normalized result:", result);
+    return result;
   }
   
   // Mock food analysis - provides unique results based on image content
@@ -397,13 +583,13 @@ Request ID: ${requestId}`
         `);
         
         resolve({
-          foodName: food.name,
+          foodName: `Estimated ${food.name}`,
           calories: calories,
           protein: protein,
           carbs: carbs,
           fat: fat,
           ingredients: food.ingredients,
-          confidence: 0.8 + (hash % 20) / 100
+          confidence: 0.5 + (hash % 20) / 100 // Lower confidence for mock results
         });
       }, 1500);
     });

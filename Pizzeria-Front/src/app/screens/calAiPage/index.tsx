@@ -32,7 +32,7 @@ export default function CalAiPage() {
   
   // Model selection with direct access to env variables as fallback
   const [modelConfig, setModelConfig] = useState<OpenRouterModelConfig>({
-    modelId: 'anthropic/claude-3-sonnet-20240229',  // Default to Claude 3 Sonnet
+    modelId: 'google/gemini-pro-vision',  // Default to Gemini Pro Vision
     apiKey: openRouterApiKey || DIRECT_API_KEY || ''
   });
 
@@ -44,25 +44,52 @@ export default function CalAiPage() {
 
   // Initialize API key on component mount with enhanced debugging
   useEffect(() => {
-    // Log the actual API key (first few chars) for debugging
-    console.log("Direct API key first chars:", DIRECT_API_KEY?.substring(0, 5));
-    console.log("OpenRouter direct environment variable:", process.env.REACT_APP_OPENROUTER_API_KEY?.substring(0, 5));
+    // Log API key availability without exposing values
+    console.log("OpenRouter API key available:", !!openRouterApiKey);
+    console.log("Direct env API key available:", !!DIRECT_API_KEY);
     
     // Get all possible API key sources
-    const hardcodedKey = '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';
-    const bestApiKey = openRouterApiKey || DIRECT_API_KEY || hardcodedKey;
+    const bestApiKey = openRouterApiKey || DIRECT_API_KEY || '';
     
-    // Update model config with the best API key, always use Claude 3 Sonnet
+    // Update model config with the best API key, always use Gemini Pro Vision
     setModelConfig(prev => ({
       ...prev,
-      modelId: 'anthropic/claude-3-sonnet-20240229',
+      modelId: 'google/gemini-pro-vision',
       apiKey: bestApiKey
     }));
     
     setIsApiInitialized(true);
     
-    // Initialize service with API key
+    // Initialize service with API key and verify connectivity
     visionService.setConfig({ apiKey: bestApiKey });
+    
+    // Test API connectivity
+    const testConnectivity = async () => {
+      try {
+        // Use the API key but don't log its value
+        visionService.logApiKeyStatus();
+        console.log("API key configuration complete. Testing connectivity...");
+        
+        // Simple fetch to test connectivity to OpenRouter
+        const response = await fetch('https://openrouter.ai/', {
+          method: 'HEAD'
+        });
+        
+        if (response.ok) {
+          console.log("OpenRouter connectivity test successful!");
+          return true;
+        } else {
+          console.warn(`OpenRouter connectivity test failed with status: ${response.status}`);
+          return false;
+        }
+      } catch (err) {
+        console.error("OpenRouter connectivity test failed:", err);
+        return false;
+      }
+    };
+    
+    // Run connectivity test
+    testConnectivity();
   }, []);
 
   // Handle image upload with better validation
@@ -101,7 +128,7 @@ export default function CalAiPage() {
     }
   };
 
-  // Analyze image using AI vision model - with enhanced status updates
+  // Analyze image using AI vision model - with enhanced status updates and retries
   const analyzeImage = async () => {
     if (!image) return;
     
@@ -116,91 +143,123 @@ export default function CalAiPage() {
     const requestId = Date.now().toString();
     console.log(`Starting analysis for request ${requestId}`);
     
-    try {
-      // Always use the hardcoded key for consistency
-      const hardcodedKey = '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';
-      
-      setLoadingStatus('Preparing image for analysis...');
-      console.log(`Request ${requestId}: Preparing image`);
-      
-      // Always use the hardcoded key for reliability
-      visionService.setConfig({ 
-        modelId: 'anthropic/claude-3-sonnet-20240229',
-        apiKey: hardcodedKey
-      });
-      
-      // Call the vision service with the image
-      setLoadingStatus(`Sending to OpenRouter API (request ${requestId})...`);
-      console.log(`Request ${requestId}: Calling API`);
-      
-      // Wrap API call in a timeout promise to avoid UI hanging
-      const analysisResults = await Promise.race([
-        visionService.analyzeFood(image),
-        new Promise<FoodAnalysisResult>((_, reject) => {
-          // Set a timeout in case the API call hangs
-          setTimeout(() => {
-            reject(new Error("Analysis request timed out. Please try again."));
-          }, 120000); // 2 minutes timeout
-        })
-      ]);
-      
-      setLoadingStatus('Processing results...');
-      console.log(`Request ${requestId}: Results received:`, analysisResults);
-      
-      // Check for mock results (fallback from network error)
-      const isMockResult = 
-        analysisResults.foodName === "Pizza" ||
-        analysisResults.foodName === "Burger" ||
-        analysisResults.foodName === "Salad" ||
-        analysisResults.foodName === "Pasta" ||
-        analysisResults.foodName === "Steak" ||
-        analysisResults.foodName === "Sushi";
+    // Maximum number of retries
+    const maxRetries = 2;
+    let retryCount = 0;
+    
+    // Retry loop
+    while (retryCount <= maxRetries) {
+      try {
+        // Always use the environment variable API key
+        const apiKey = openRouterApiKey || DIRECT_API_KEY || '';
         
-      if (isMockResult) {
-        console.warn(`Request ${requestId}: Detected mock results due to network issue. Showing simulated results.`);
-        // Show a warning to the user but still display the results
-        setError("Network connectivity issue detected. Showing estimated nutritional information.");
-      }
-      
-      // Check if the result is valid
-      if (!analysisResults.foodName || 
-          (analysisResults.calories === 0 && 
-           analysisResults.protein === 0 && 
-           analysisResults.carbs === 0 && 
-           analysisResults.fat === 0)) {
-        throw new Error("Could not analyze the food in this image. Please try a clearer image of a food item.");
-      }
-      
-      // Set results with a delay to ensure UI updates properly
-      setTimeout(() => {
-        setResults(analysisResults);
-        setLoadingStatus('Analysis complete');
-        console.log(`Request ${requestId}: Analysis completed successfully`);
-      }, 100);
-      
-    } catch (err: any) {
-      console.error(`Request ${requestId}: Error analyzing food image:`, err);
-      setLoadingStatus('Analysis failed');
-      
-      // Detailed error handling
-      let errorMessage = 'Failed to analyze image. Please try again.';
-      
-      if (err.message) {
-        if (err.message.includes('Network Error')) {
-          errorMessage = 'Network error: Please check your internet connection and try again.';
-        } else if (err.message.includes('timeout')) {
-          errorMessage = 'The request timed out. The server might be busy, please try again later.';
-        } else if (err.message.includes('API error')) {
-          errorMessage = `API error: ${err.message.split('API error:')[1] || 'Please try again later.'}`;
-        } else {
-          errorMessage = err.message;
+        // Create a fixed retryMessage to avoid closure capturing the changing retryCount
+        const retryMessage = retryCount > 0 ? `Retry ${retryCount}/${maxRetries}: ` : '';
+        setLoadingStatus(`${retryMessage}Preparing image for analysis...`);
+        
+        console.log(`Request ${requestId}: Preparing image${retryCount > 0 ? ` (Retry ${retryCount}/${maxRetries})` : ''}`);
+        
+        // Use the API key from environment variables
+        visionService.setConfig({ 
+          modelId: 'google/gemini-pro-vision',
+          apiKey: apiKey
+        });
+        
+        // Call the vision service with the image
+        setLoadingStatus(`${retryMessage}Sending to OpenRouter API (request ${requestId})...`);
+        
+        console.log(`Request ${requestId}: Calling API${retryCount > 0 ? ` (Retry ${retryCount}/${maxRetries})` : ''}`);
+        
+        // Wrap API call in a timeout promise to avoid UI hanging
+        const analysisResults = await Promise.race([
+          visionService.analyzeFood(image),
+          new Promise<FoodAnalysisResult>((_, reject) => {
+            // Set a timeout in case the API call hangs
+            setTimeout(() => {
+              reject(new Error("Analysis request timed out. Please try again."));
+            }, 120000); // 2 minutes timeout
+          })
+        ]);
+        
+        setLoadingStatus('Processing results...');
+        console.log(`Request ${requestId}: Results received:`, analysisResults);
+        
+        // Check for mock results (fallback from network error)
+        const isMockResult = 
+          analysisResults.foodName.includes("Estimated") ||
+          analysisResults.foodName === "Pizza" ||
+          analysisResults.foodName === "Burger" ||
+          analysisResults.foodName === "Salad" ||
+          analysisResults.foodName === "Pasta" ||
+          analysisResults.foodName === "Steak" ||
+          analysisResults.foodName === "Sushi";
+          
+        if (isMockResult) {
+          console.warn(`Request ${requestId}: Detected mock results due to network issue. Showing simulated results.`);
+          // Show a warning to the user but still display the results
+          setError("Network connectivity issue detected. Showing estimated nutritional information. Results may not be accurate.");
         }
-      }
-      
-      setError(errorMessage);
-    } finally {
-      setIsAnalyzing(false);
+        
+        // Check if the result is valid
+        if (!analysisResults.foodName || 
+            (analysisResults.calories === 0 && 
+             analysisResults.protein === 0 && 
+             analysisResults.carbs === 0 && 
+             analysisResults.fat === 0)) {
+          throw new Error("Could not analyze the food in this image. Please try a clearer image of a food item.");
+        }
+        
+        // Set results with a delay to ensure UI updates properly
+        setTimeout(() => {
+          setResults(analysisResults);
+          setLoadingStatus('Analysis complete');
+          console.log(`Request ${requestId}: Analysis completed successfully`);
+        }, 100);
+        
+        // If we got here, we succeeded, so break out of the retry loop
+        break;
+        
+      } catch (err: any) {
+        console.error(`Request ${requestId}: Error analyzing food image (try ${retryCount}):`, err);
+        
+        // Check if we should retry
+        if (retryCount < maxRetries && 
+            (err.message?.includes('Network Error') || 
+             err.message?.includes('timeout') || 
+             err.message?.includes('404'))) {
+          // Increment retry count before creating message to avoid closure issue
+          const currentRetry = retryCount + 1;
+          retryCount = currentRetry;
+          const retryMsg = `Retry ${currentRetry}/${maxRetries}: Reconnecting...`;
+          setLoadingStatus(retryMsg);
+          // Wait before retrying (exponential backoff)
+          await new Promise(resolve => setTimeout(resolve, 1000 * currentRetry));
+          continue;
+        }
+        
+        setLoadingStatus('Analysis failed');
+        
+        // Detailed error handling
+        let errorMessage = 'Failed to analyze image. Please try again.';
+        
+        if (err.message) {
+          if (err.message.includes('Network Error')) {
+            errorMessage = 'Network error: Please check your internet connection and try again.';
+          } else if (err.message.includes('timeout')) {
+            errorMessage = 'The request timed out. The server might be busy, please try again later.';
+          } else if (err.message.includes('API error')) {
+            errorMessage = `API error: ${err.message.split('API error:')[1] || 'Please try again later.'}`;
+          } else {
+            errorMessage = err.message;
+          }
+        }
+        
+        setError(errorMessage);
+        break;
+      } 
     }
+    
+    setIsAnalyzing(false);
   };
 
   // Reset everything
@@ -243,7 +302,7 @@ export default function CalAiPage() {
               </Typography>
               {/* Show the model being used */}
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-                Powered by Claude 3 Sonnet
+                Powered by Cal AI - Alex   
               </Typography>
             </Box>
 
@@ -394,7 +453,7 @@ export default function CalAiPage() {
                         {results.foodName}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        Analyzed by Claude 3 Sonnet at {new Date().toLocaleTimeString()}
+                        Analyzed by Cal AI at  {new Date().toLocaleTimeString()}
                       </Typography>
                       <Divider sx={{ width: '100%', my: 2 }} />
                       
