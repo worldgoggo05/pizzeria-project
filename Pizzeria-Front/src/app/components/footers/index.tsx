@@ -1,48 +1,5 @@
-import React from "react";
 import { Box, Container, Stack, Typography, Grid } from "@mui/material";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-
-const Footers = styled.div`
-  width: 100%;
-  padding: 40px 0 20px;
-  background: #343434;
-  color: #fff;
-`;
-
-const FooterLink = styled(Link)`
-  color: #C5C8C9;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 8px;
-  transition: color 0.3s;
-  
-  &:hover {
-    color: #fff;
-  }
-`;
-
-const ContactItem = styled(Box)`
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 8px;
-  
-  span {
-    min-width: 24px;
-    margin-right: 8px;
-    font-weight: bold;
-  }
-`;
-
-const SocialIcon = styled.img`
-  margin-right: 12px;
-  cursor: pointer;
-  transition: opacity 0.3s;
-  
-  &:hover {
-    opacity: 0.8;
-  }
-`;
+import { Footers, FooterLink, ContactItem, SocialIcon } from "../../../lib/types/styled";
 
 export default function Footer() {
   const authMember = null;
