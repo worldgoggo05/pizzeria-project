@@ -3,3 +3,5 @@ dist
 uploads/
 input_images/
 
+.env
+.env.production
