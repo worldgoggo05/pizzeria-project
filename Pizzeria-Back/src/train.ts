@@ -1,25 +1,13 @@
-// ZR-Task
 
-interface CountResult {
-    number: number;
-    letter: number;
-}
+// PM2 commands:
+// pm2 ls
+// pm2 start dist/server.js --name=Pizzeria
+// pm2 start "npm run start:prod" --name=BURAK
+// pm2 restart (id)
+// pm2 stop (id of app that we want to shutdown)
+// pm2 delete (id)
+// pm2 logs (id of app)
+// pm2 monit
 
-function countNumberAndLetters(str: string): CountResult {
-     // RegExp yordamida raqam va harflarni topamiz
-    const numbers: string[] = str.match(/\d/g) || [];
-    const letters: string[] = str.match(/[a-zA-Z]/g) || [];
-    
-    // Natijani object ko'rinishida qaytaramiz
-    return {
-        number: numbers.length,
-        letter: letters.length
-    };
-}
-
-// Test misollar
-console.log(countNumberAndLetters("string152%\¥")); // {number: 3, letter: 6}
-console.log(countNumberAndLetters("Web8Development2023")); // {number: 4, letter: 13}
-console.log(countNumberAndLetters("12345")); // {number: 5, letter: 0}
-
+// pm2 kill   -to kill all the proccess !!!
 
